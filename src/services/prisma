@@ -1,0 +1,49 @@
+// server/prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  role      Role     @default(STUDENT)
+  createdAt DateTime @default(now())
+}
+
+model BusRoute {
+  id          String   @id @default(uuid())
+  routeName   String
+  startPoint  String
+  endPoint    String
+  stops       BusStop[]
+}
+
+model BusStop {
+  id      String   @id @default(uuid())
+  name    String
+  routeId String
+  route   BusRoute @relation(fields: [routeId], references: [id])
+}
+
+model LocationLog {
+  id         String   @id @default(uuid())
+  routeId    String
+  latitude   Float
+  longitude  Float
+  passengers String
+  timestamp  DateTime @default(now())
+}
+
+enum Role {
+  STUDENT
+  DRIVER
+  STAFF
+  ADMIN
+}
